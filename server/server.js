@@ -22,12 +22,27 @@ dotenv.config();
 // Initialize express app
 const app = express();
 
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,https://blood-donation-two-nu.vercel.app')
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origin is not allowed by CORS'));
+  },
+};
+
 // Connect to database
 connectDB();
 
 // Middleware
 app.use(helmet()); // Security headers
-app.use(cors()); // Cross-origin resource sharing
+app.use(cors(corsOptions)); // Cross-origin resource sharing
+app.options('*', cors(corsOptions));
 app.use(morgan('combined')); // Request logging
 app.use(express.json()); // JSON body parser
 app.use(express.urlencoded({ extended: true })); // URL encoded body parser
