@@ -22,8 +22,11 @@ dotenv.config();
 // Initialize express app
 const app = express();
 
-const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,https://blood-donation-two-nu.vercel.app')
-  .split(',')
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://blood-donation-two-nu.vercel.app',
+  ...(process.env.CORS_ORIGIN || '').split(','),
+]
   .map((origin) => origin.trim().replace(/\/$/, ''))
   .filter(Boolean);
 
