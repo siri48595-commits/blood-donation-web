@@ -3,6 +3,13 @@ import { isWithinRadius } from '../utils/distanceService.js';
 
 const toPrivacySafeDonor = (donor) => {
   const data = donor.toObject ? donor.toObject() : donor;
+  delete data.password;
+  delete data.passwordResetToken;
+  delete data.passwordResetExpires;
+  delete data.passwordResetOtp;
+  delete data.passwordResetOtpExpires;
+  delete data.passwordResetOtpAttempts;
+  delete data.passwordResetOtpChannel;
   return {
     ...data,
     latitude: Number.isFinite(data.latitude) ? Number(data.latitude.toFixed(3)) : null,
@@ -24,7 +31,7 @@ export const getAllDonors = async (req, res) => {
       role: 'DONOR',
       isActive: true,
     })
-      .select('-password')
+      .select('-password -passwordResetToken -passwordResetExpires -passwordResetOtp -passwordResetOtpExpires -passwordResetOtpAttempts -passwordResetOtpChannel')
       .skip(skip)
       .limit(limit);
 
@@ -59,7 +66,7 @@ export const getAllDonors = async (req, res) => {
  */
 export const getDonorById = async (req, res) => {
   try {
-    const donor = await User.findById(req.params.id).select('-password');
+    const donor = await User.findById(req.params.id).select('-password -passwordResetToken -passwordResetExpires -passwordResetOtp -passwordResetOtpExpires -passwordResetOtpAttempts -passwordResetOtpChannel');
 
     if (!donor || donor.role !== 'DONOR') {
       return res.status(404).json({
@@ -140,7 +147,7 @@ export const searchDonors = async (req, res) => {
 
     // Fetch the filtered set before pagination so radius filtering does not
     // discard valid records from a page before distance is evaluated.
-    let donors = await User.find(query).select('-password');
+    let donors = await User.find(query).select('-password -passwordResetToken -passwordResetExpires -passwordResetOtp -passwordResetOtpExpires -passwordResetOtpAttempts -passwordResetOtpChannel');
 
     // Filter by radius if coordinates provided
     if (latitude && longitude && radius) {

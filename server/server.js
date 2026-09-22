@@ -35,6 +35,7 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:5173',
   'https://blood-donation-two-nu.vercel.app',
+  'https://blood-donation-web-green.vercel.app',
   ...(process.env.CORS_ORIGIN || '').split(','),
 ]
   .map((origin) => origin.trim().replace(/\/$/, ''))
@@ -71,6 +72,13 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
+app.get('/', (req, res) => {
+  return res.status(200).json({
+    success: true,
+    message: 'Bloodly API is running. Use /api for API endpoints.',
+  });
+});
+
 app.get('/api', (req, res) => {
   return res.status(200).json({
     success: true,
