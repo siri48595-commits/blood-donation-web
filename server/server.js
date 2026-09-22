@@ -19,6 +19,16 @@ import adminRoutes from './routes/adminRoutes.js';
 // Load environment variables
 dotenv.config();
 
+const missingEmailConfiguration = [
+  ['SMTP_HOST', process.env.SMTP_HOST],
+  ['SMTP_USER', process.env.SMTP_USER],
+  ['SMTP_PASSWORD', process.env.SMTP_PASSWORD],
+].filter(([, value]) => !value).map(([name]) => name);
+
+if (missingEmailConfiguration.length) {
+  console.warn(`Password reset email is not configured. Missing: ${missingEmailConfiguration.join(', ')}`);
+}
+
 // Initialize express app
 const app = express();
 

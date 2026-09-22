@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, MessageCircle } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const ForgotPassword = () => {
@@ -17,10 +17,6 @@ const ForgotPassword = () => {
             <Link to="/forgot-password/email" className="flex items-center gap-3 rounded-xl border border-gray-200 p-4 hover:border-primary-500 hover:bg-primary-50 dark:border-gray-700 dark:hover:bg-gray-800">
               <Mail className="h-5 w-5 text-primary-600" />
               <span className="font-semibold">Reset using Email</span>
-            </Link>
-            <Link to="/forgot-password/phone" className="flex items-center gap-3 rounded-xl border border-gray-200 p-4 hover:border-primary-500 hover:bg-primary-50 dark:border-gray-700 dark:hover:bg-gray-800">
-              <MessageCircle className="h-5 w-5 text-primary-600" />
-              <span className="font-semibold">Reset using Phone Number / WhatsApp</span>
             </Link>
           </div>
 

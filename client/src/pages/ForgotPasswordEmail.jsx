@@ -32,6 +32,7 @@ const ForgotPasswordEmail = () => {
     }
   };
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4 py-20">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
@@ -50,7 +51,7 @@ const ForgotPasswordEmail = () => {
                   <input id="reset-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Enter your email" className="w-full pl-10" />
                 </div>
               </div>
-              <Button type="submit" disabled={loading} className="w-full">{loading ? <LoadingSpinner /> : 'Send Reset Link'}</Button>
+              <Button type="submit" disabled={loading} className="w-full">{loading ? <LoadingSpinner /> : 'Send Verification Code'}</Button>
             </form>
           )}
           <div className="mt-6 text-center space-y-2">

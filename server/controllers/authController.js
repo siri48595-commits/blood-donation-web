@@ -2,7 +2,6 @@ import crypto from 'crypto';
 import User from '../models/User.js';
 import { generateToken } from '../utils/generateToken.js';
 import { sendPasswordResetEmail } from '../services/emailService.js';
-import { sendPasswordResetOtp } from '../services/whatsappService.js';
 import {
   isValidEmail,
   isValidPassword,
@@ -255,10 +254,7 @@ export const forgotPassword = async (req, res) => {
     }
 
     const rawToken = crypto.randomBytes(32).toString('hex');
-    user.passwordResetToken = crypto
-      .createHash('sha256')
-      .update(rawToken)
-      .digest('hex');
+    user.passwordResetToken = crypto.createHash('sha256').update(rawToken).digest('hex');
     user.passwordResetExpires = new Date(Date.now() + 30 * 60 * 1000);
     await user.save({ validateBeforeSave: false });
 
@@ -271,7 +267,7 @@ export const forgotPassword = async (req, res) => {
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       await user.save({ validateBeforeSave: false });
-      console.error('Password reset email error:', emailError);
+      console.error('Password reset email delivery failed:', emailError);
     }
 
     return res.status(200).json(genericResponse);
@@ -341,116 +337,10 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-const phoneResetResponse = {
-  success: true,
-  message: 'If this phone number is registered, a password reset code has been sent through WhatsApp.',
-};
-
-/**
- * Request a password reset OTP through WhatsApp
- * POST /api/auth/forgot-password/phone
- */
-export const forgotPasswordByPhone = async (req, res) => {
-  try {
-    const phone = req.body.phone?.trim();
-    const normalizedPhone = phone?.replace(/[\s-]/g, '');
-
-    if (!normalizedPhone) {
-      return res.status(200).json(phoneResetResponse);
-    }
-
-    const user = await User.findOne({
-      phone: { $in: [phone, normalizedPhone] },
-    }).select('+passwordResetOtp +passwordResetOtpExpires +passwordResetOtpAttempts');
-
-    if (!user) {
-      return res.status(200).json(phoneResetResponse);
-    }
-
-    const otp = String(crypto.randomInt(100000, 1000000));
-    user.passwordResetOtp = crypto.createHash('sha256').update(otp).digest('hex');
-    user.passwordResetOtpExpires = new Date(Date.now() + 10 * 60 * 1000);
-    user.passwordResetOtpAttempts = 0;
-    await user.save({ validateBeforeSave: false });
-
-    try {
-      await sendPasswordResetOtp(normalizedPhone, otp);
-    } catch (whatsappError) {
-      user.passwordResetOtp = undefined;
-      user.passwordResetOtpExpires = undefined;
-      user.passwordResetOtpAttempts = 0;
-      await user.save({ validateBeforeSave: false });
-      console.error('Password reset WhatsApp error:', whatsappError);
-    }
-
-    return res.status(200).json(phoneResetResponse);
-  } catch (error) {
-    console.error('Forgot password by phone error:', error);
-    return res.status(200).json(phoneResetResponse);
-  }
-};
-
-/**
- * Verify a WhatsApp OTP and reset the password
- * POST /api/auth/reset-password/otp
- */
-export const resetPasswordByOtp = async (req, res) => {
-  try {
-    const { phone, otp, password, confirmPassword } = req.body;
-    const normalizedPhone = phone?.trim().replace(/[\s-]/g, '');
-
-    if (!normalizedPhone || !otp || !password || !confirmPassword) {
-      return res.status(400).json({ success: false, message: 'Phone number, OTP, and both password fields are required.' });
-    }
-    if (password !== confirmPassword) {
-      return res.status(400).json({ success: false, message: 'Passwords do not match.' });
-    }
-    if (!isValidPassword(password)) {
-      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long.' });
-    }
-
-    const user = await User.findOne({
-      phone: { $in: [phone, normalizedPhone] },
-    }).select('+passwordResetOtp +passwordResetOtpExpires +passwordResetOtpAttempts');
-
-    if (!user || user.passwordResetOtpAttempts >= 5) {
-      return res.status(400).json({ success: false, message: 'The OTP is invalid or expired.' });
-    }
-
-    const hashedOtp = crypto.createHash('sha256').update(String(otp)).digest('hex');
-    const isValidOtp = user.passwordResetOtp === hashedOtp
-      && user.passwordResetOtpExpires
-      && user.passwordResetOtpExpires > new Date();
-
-    if (!isValidOtp) {
-      user.passwordResetOtpAttempts += 1;
-      if (user.passwordResetOtpAttempts >= 5) {
-        user.passwordResetOtp = undefined;
-        user.passwordResetOtpExpires = undefined;
-      }
-      await user.save({ validateBeforeSave: false });
-      return res.status(400).json({ success: false, message: 'The OTP is invalid or expired.' });
-    }
-
-    user.password = password;
-    user.passwordResetOtp = undefined;
-    user.passwordResetOtpExpires = undefined;
-    user.passwordResetOtpAttempts = 0;
-    await user.save();
-
-    return res.status(200).json({ success: true, message: 'Password reset successfully.' });
-  } catch (error) {
-    console.error('OTP password reset error:', error);
-    return res.status(500).json({ success: false, message: 'Unable to reset password. Please try again.' });
-  }
-};
-
 export default {
   register,
   login,
   logout,
   forgotPassword,
   resetPassword,
-  forgotPasswordByPhone,
-  resetPasswordByOtp,
 };

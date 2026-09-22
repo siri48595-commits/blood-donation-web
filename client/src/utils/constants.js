@@ -47,8 +47,6 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
-    FORGOT_PASSWORD_PHONE: '/auth/forgot-password/phone',
-    RESET_PASSWORD_OTP: '/auth/reset-password/otp',
   },
   USER: {
     PROFILE: '/user/profile',

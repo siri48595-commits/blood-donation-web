@@ -13,7 +13,6 @@ const Home = lazy(() => import('./pages/Home.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword.jsx'));
 const ForgotPasswordEmail = lazy(() => import('./pages/ForgotPasswordEmail.jsx'));
-const ForgotPasswordPhone = lazy(() => import('./pages/ForgotPasswordPhone.jsx'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
 const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
@@ -37,7 +36,6 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/forgot-password/email" element={<ForgotPasswordEmail />} />
-                  <Route path="/forgot-password/phone" element={<ForgotPasswordPhone />} />
                   <Route path="/reset-password/:token" element={<ResetPassword />} />
                   <Route path="/register" element={<Register />} />
                   

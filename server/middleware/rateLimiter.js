@@ -34,14 +34,6 @@ export const passwordResetLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-export const passwordResetOtpLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: 'Too many OTP verification attempts, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 /**
  * Rate limiter for AI routes
  */
@@ -53,4 +45,4 @@ export const aiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-export default { apiLimiter, authLimiter, passwordResetLimiter, passwordResetOtpLimiter, aiLimiter };
+export default { apiLimiter, authLimiter, passwordResetLimiter, aiLimiter };

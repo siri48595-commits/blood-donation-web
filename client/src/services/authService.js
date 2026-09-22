@@ -58,29 +58,6 @@ export const resetPassword = async (token, password, confirmPassword) => {
   }
 };
 
-export const requestPhonePasswordReset = async (phone) => {
-  try {
-    const response = await api.post('/auth/forgot-password/phone', { phone });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error;
-  }
-};
-
-export const resetPasswordWithOtp = async (phone, otp, password, confirmPassword) => {
-  try {
-    const response = await api.post('/auth/reset-password/otp', {
-      phone,
-      otp,
-      password,
-      confirmPassword,
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error;
-  }
-};
-
 /**
  * Logout user
  */
@@ -124,8 +101,6 @@ export default {
   authLogin,
   requestPasswordReset,
   resetPassword,
-  requestPhonePasswordReset,
-  resetPasswordWithOtp,
   authLogout,
   getCurrentUser,
   getAuthToken,

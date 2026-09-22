@@ -33,19 +33,6 @@ const userSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
-    passwordResetOtp: {
-      type: String,
-      select: false,
-    },
-    passwordResetOtpExpires: {
-      type: Date,
-      select: false,
-    },
-    passwordResetOtpAttempts: {
-      type: Number,
-      select: false,
-      default: 0,
-    },
     phone: {
       type: String,
       required: [true, 'Please provide a phone number'],
@@ -123,9 +110,7 @@ const userSchema = new mongoose.Schema(
 );
 
 // Index for efficient queries
-userSchema.index({ email: 1 });
 userSchema.index({ passwordResetToken: 1 });
-userSchema.index({ passwordResetOtp: 1 });
 userSchema.index({ bloodGroup: 1 });
 userSchema.index({ city: 1, state: 1 });
 userSchema.index({ role: 1 });

@@ -51,7 +51,9 @@ CORS_ORIGIN=http://localhost:5173
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
+SMTP_PASSWORD=your-app-password
+SMTP_FROM=Bloodly <your-email@gmail.com>
+
 
 # Rate Limiting
 RATE_LIMIT_WINDOW_MS=900000
